@@ -1,3 +1,4 @@
+require('../utils/AppError');
 
 const sendErrorDev = (err, res) => {
     res.status(err.statusCode || 500).json({
@@ -39,7 +40,7 @@ const sendErrorDev = (err, res) => {
     // Différencier les réponses en fonction de l'environnement
     if (process.env.NODE_ENV === 'production') {
         let error = { ...err, message: err.message }; 
-        
+
         // Exemple: Gérer une erreur JWT invalide
          if (error.name === 'JsonWebTokenError') error = new AppError('Token invalide. Veuillez vous reconnecter.', 401);
          // Exemple: Gérer une erreur JWT expiré
