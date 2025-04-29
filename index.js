@@ -2,10 +2,10 @@ const express = require("express");
 const app = express();
 const coachRoutes = require("./routes/coachRoutes");
 const authRoutes = require("./routes/authRoutes");
-const globalErrorHandler = require('./controllers/errorController');
-const AppError = require('./utils/AppError');
+const globalErrorHandler = require("./controllers/errorController");
+const AppError = require("./utils/AppError");
 
-require('dotenv').config(); // Load environment variables from .env file
+require("dotenv").config(); // Load environment variables from .env file
 
 app.use(express.json());
 
@@ -17,7 +17,12 @@ app.get("/ping", (req, res) => {
 });
 
 app.use((req, res, next) => {
-  next(new AppError(`Impossible de trouver ${req.originalUrl} sur ce serveur!`, 404));
+  next(
+    new AppError(
+      `Impossible de trouver ${req.originalUrl} sur ce serveur!`,
+      404
+    )
+  );
 });
 
 app.use(globalErrorHandler); // Global error handler
