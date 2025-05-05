@@ -17,3 +17,26 @@ exports.getClientsForUser = asyncHandler(async (req, res, next) => {
     data: clients,
   });
 });
+
+exports.createClient = asyncHandler(async (req, res, next) => {
+  const { nom, prenom, email, sexe, photo, age, objectif } = req.body;
+  const userId = req.user.id;
+
+  clientModel.create(
+    nom,
+    prenom,
+    email,
+    sexe,
+    photo,
+    age,
+    objectif,
+    userId,
+    (err) => {
+      if (err)
+        return next(new AppError("Erreur lors de la création du client", 500));
+      res
+        .status(201)
+        .json({ status: "success", message: "Client créé avec succès." });
+    }
+  );
+});
