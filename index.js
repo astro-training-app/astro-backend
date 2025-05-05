@@ -1,3 +1,4 @@
+require("dotenv").config(); // Load environment variables from .env file
 const express = require("express");
 const app = express();
 const coachRoutes = require("./routes/coachRoutes");
@@ -5,8 +6,6 @@ const authRoutes = require("./routes/authRoutes");
 const clientRoutes = require("./routes/clientRoutes");
 const globalErrorHandler = require("./controllers/errorController");
 const AppError = require("./utils/AppError");
-
-require("dotenv").config(); // Load environment variables from .env file
 
 app.use(express.json());
 
