@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const coachRoutes = require("./routes/coachRoutes");
 const authRoutes = require("./routes/authRoutes");
+const clientRoutes = require("./routes/clientRoutes");
 const globalErrorHandler = require("./controllers/errorController");
 const AppError = require("./utils/AppError");
 
@@ -11,6 +12,7 @@ app.use(express.json());
 
 //app.use("/api/coaches", coachRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/clients", clientRoutes);
 
 app.get("/ping", (req, res) => {
   res.send("pong");
