@@ -26,3 +26,23 @@ exports.create = (
   const params = [nom, prenom, email, sexe, photo, age, objectif, userId];
   db.run(sql, params, callback);
 };
+
+exports.update = (
+  id,
+  nom,
+  prenom,
+  email,
+  sexe,
+  photo,
+  age,
+  objectif,
+  callback
+) => {
+  const sql = `
+    UPDATE clients
+    SET nom = ?, prenom = ?, email = ?, sexe = ?, photo = ?, age = ?, objectif = ?
+    WHERE id = ?
+  `;
+  const params = [nom, prenom, email, sexe, photo, age, objectif, id];
+  db.run(sql, params, callback);
+};
