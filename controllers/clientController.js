@@ -61,6 +61,9 @@ exports.updateClient = asyncHandler(async (req, res, next) => {
   const { nom, prenom, email, sexe, photo, age, objectif } = req.body;
 
   // 1. Vérifie l'ID
+exports.deleteClient = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
   if (!id || isNaN(id) || parseInt(id) < 1) {
     return next(new AppError("ID invalide fourni.", 400));
   }
