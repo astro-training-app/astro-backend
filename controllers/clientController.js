@@ -55,3 +55,33 @@ exports.createClient = asyncHandler(async (req, res, next) => {
     }
   );
 });
+
+exports.deleteClient = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  if (!id || isNaN(id) || parseInt(id) < 1) {
+    return next(new AppError("ID invalide fourni.", 400));
+  }
+
+  clientModel.findById(id, (err, client) => {
+    if (err) {
+      return next(new AppError("Erreur lors de la recherche du client.", 500));
+    }
+    if (!client) {
+      return next(new AppError("Aucun client trouvé avec cet ID.", 404));
+    }
+
+    clientModel.delete(id, (err) => {
+      if (err) {
+        return next(
+          new AppError("Erreur lors de la suppression du client.", 500)
+        );
+      }
+
+      return res.status(200).json({
+        status: "success",
+        message: `Client avec l'ID ${id} supprimé.`,
+      });
+    });
+  });
+});
