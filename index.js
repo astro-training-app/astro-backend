@@ -26,7 +26,7 @@ app.use((req, res, next) => {
   );
 });
 
-app.use(globalErrorHandler); // Global error handler
+app.use(globalErrorHandler);
 
 app.listen(3000, () => {
   console.log("Server is running on http://localhost:3000");

@@ -26,3 +26,13 @@ exports.create = (
   const params = [nom, prenom, email, sexe, photo, age, objectif, userId];
   db.run(sql, params, callback);
 };
+
+exports.findById = (id, callback) => {
+  const sql = "SELECT * FROM clients WHERE id = ?";
+  db.get(sql, [id], callback);
+};
+
+exports.delete = (id, callback) => {
+  const sql = "DELETE FROM clients WHERE id = ?";
+  db.run(sql, [id], callback);
+};
