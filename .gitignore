@@ -1,3 +1,4 @@
 node_modules
 .env
-db\coachapp.db
+db/coachapp.db
+coachapp.db
