@@ -55,3 +55,50 @@ exports.createClient = asyncHandler(async (req, res, next) => {
     }
   );
 });
+
+exports.updateClient = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const { nom, prenom, email, sexe, photo, age, objectif } = req.body;
+
+  // 1. Vérifie l'ID
+  if (!id || isNaN(id) || parseInt(id) < 1) {
+    return next(new AppError("ID invalide fourni.", 400));
+  }
+
+  // 2. Vérifie que le client existe
+  clientModel.findById(id, (err, client) => {
+    if (err) {
+      return next(new AppError("Erreur lors de la recherche du client.", 500));
+    }
+    if (!client) {
+      return next(new AppError("Aucun client trouvé avec cet ID.", 404));
+    }
+
+    // 3. (Optionnel) Validation des champs requis
+    if (!nom || !prenom || !email) {
+      return next(new AppError("Champs obligatoires manquants.", 400));
+    }
+
+    // 4. Mise à jour
+    clientModel.update(
+      id,
+      nom,
+      prenom,
+      email,
+      sexe,
+      photo,
+      age,
+      objectif,
+      (err) => {
+        if (err) {
+          return next(new AppError("Erreur lors de la mise à jour.", 500));
+        }
+
+        res.status(200).json({
+          status: "success",
+          message: `Client avec l'ID ${id} mis à jour.`,
+        });
+      }
+    );
+  });
+});
