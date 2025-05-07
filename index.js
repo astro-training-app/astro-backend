@@ -7,6 +7,9 @@ const clientRoutes = require("./routes/clientRoutes");
 const globalErrorHandler = require("./controllers/errorController");
 const AppError = require("./utils/AppError");
 
+const CORS = require("cors");
+app.use(CORS());
+
 app.use(express.json());
 
 //app.use("/api/coaches", coachRoutes);
