@@ -56,6 +56,49 @@ exports.createClient = asyncHandler(async (req, res, next) => {
   );
 });
 
+exports.updateClient = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const { nom, prenom, email, sexe, photo, age, objectif } = req.body;
+
+  if (!id || isNaN(id) || parseInt(id) < 1) {
+    return next(new AppError("ID invalide fourni.", 400));
+  }
+
+  clientModel.findById(id, (err, client) => {
+    if (err) {
+      return next(new AppError("Erreur lors de la recherche du client.", 500));
+    }
+    if (!client) {
+      return next(new AppError("Aucun client trouvé avec cet ID.", 404));
+    }
+
+    if (!nom || !prenom || !email) {
+      return next(new AppError("Champs obligatoires manquants.", 400));
+    }
+
+    clientModel.update(
+      id,
+      nom,
+      prenom,
+      email,
+      sexe,
+      photo,
+      age,
+      objectif,
+      (err) => {
+        if (err) {
+          return next(new AppError("Erreur lors de la mise à jour.", 500));
+        }
+
+        res.status(200).json({
+          status: "success",
+          message: `Client avec l'ID ${id} mis à jour.`,
+        });
+      }
+    );
+  });
+});
+
 exports.deleteClient = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
@@ -78,7 +121,7 @@ exports.deleteClient = asyncHandler(async (req, res, next) => {
         );
       }
 
-      return res.status(200).json({
+      res.status(200).json({
         status: "success",
         message: `Client avec l'ID ${id} supprimé.`,
       });

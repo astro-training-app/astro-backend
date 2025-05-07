@@ -7,6 +7,13 @@ exports.findByCoachId = (coachId, callback) => {
   });
 };
 
+exports.findById = (id, callback) => {
+  const sql = "SELECT * FROM clients WHERE id = ?";
+  db.get(sql, [id], (err, row) => {
+    callback(err, row);
+  });
+};
+
 exports.create = (
   nom,
   prenom,
@@ -27,12 +34,22 @@ exports.create = (
   db.run(sql, params, callback);
 };
 
-exports.findById = (id, callback) => {
-  const sql = "SELECT * FROM clients WHERE id = ?";
-  db.get(sql, [id], callback);
-};
-
-exports.delete = (id, callback) => {
-  const sql = "DELETE FROM clients WHERE id = ?";
-  db.run(sql, [id], callback);
+exports.update = (
+  id,
+  nom,
+  prenom,
+  email,
+  sexe,
+  photo,
+  age,
+  objectif,
+  callback
+) => {
+  const sql = `
+    UPDATE clients
+    SET nom = ?, prenom = ?, email = ?, sexe = ?, photo = ?, age = ?, objectif = ?
+    WHERE id = ?
+  `;
+  const params = [nom, prenom, email, sexe, photo, age, objectif, id];
+  db.run(sql, params, callback);
 };
