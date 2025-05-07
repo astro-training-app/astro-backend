@@ -7,6 +7,13 @@ exports.findByCoachId = (coachId, callback) => {
   });
 };
 
+exports.findById = (id, callback) => {
+  const sql = "SELECT * FROM clients WHERE id = ?";
+  db.get(sql, [id], (err, row) => {
+    callback(err, row);
+  });
+};
+
 exports.create = (
   nom,
   prenom,
