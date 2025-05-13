@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const mensurationsControlleur = require("../controllers/mensurationsControlleur");
 const db = require("../db/database");
 
 router.post("/", (req, res) => {
@@ -11,13 +12,14 @@ router.post("/", (req, res) => {
     tour_poitrine,
     tour_taille,
     tour_cuisse,
+    client_id,
   } = req.body;
 
   const sql = `
     INSERT INTO mensurations (
       date_mesure, poids, taille, tour_biceps,
-      tour_poitrine, tour_taille, tour_cuisse
-    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+      tour_poitrine, tour_taille, tour_cuisse, client_id
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   const values = [
@@ -28,6 +30,7 @@ router.post("/", (req, res) => {
     tour_poitrine,
     tour_taille,
     tour_cuisse,
+    client_id,
   ];
 
   db.run(sql, values, function (err) {
@@ -69,6 +72,22 @@ router.delete("/:id", (req, res) => {
     }
 
     res.status(200).json({ message: "Mensuration supprimée avec succès" });
+  });
+});
+
+router.get("/client/:id", (req, res) => {
+  const clientId = req.params.id;
+
+  const sql = `
+  SELECT * FROM mensurations WHERE client_id = ? ORDER BY date_mesure ASC`;
+
+  db.all(sql, [clientId], (err, rows) => {
+    if (err) {
+      console.error("Erreur SQLite :", err.message);
+      return res.status(500).json({ message: "Erreur serveur" });
+    }
+
+    res.status(200).json(rows);
   });
 });
 
