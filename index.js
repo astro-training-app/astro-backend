@@ -31,6 +31,7 @@ app.use((req, res, next) => {
   );
 });
 
+// Ceci est un commentaire
 app.use(globalErrorHandler);
 
 app.listen(3000, () => {
