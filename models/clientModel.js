@@ -14,6 +14,14 @@ exports.findById = (id, callback) => {
   });
 };
 
+// returns client by id if coachId matches
+exports.findByIdAndCoachId = (id, coachId, callback) => {
+  const sql = "SELECT * FROM clients WHERE id = ? AND user_id = ?";
+  db.get(sql, [id, coachId], (err, row) => {
+    callback(err, row);
+  });
+};
+
 exports.create = (
   nom,
   prenom,
