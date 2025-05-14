@@ -42,7 +42,7 @@
 
 ### 🔗 Relations
 
-2- Un **user** possède plusieurs **clients**
+- Un **user** possède plusieurs **clients**
 - Un **user** enregistre plusieurs **mensurations**
 - Un **client** possède plusieurs **mensurations**
 
