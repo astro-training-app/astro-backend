@@ -18,6 +18,27 @@ exports.getClientsForUser = asyncHandler(async (req, res, next) => {
   });
 });
 
+exports.getClientById = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const coachId = req.user.id;
+
+  const client = await new Promise((resolve, reject) => {
+    clientModel.findByIdAndCoachId(id, coachId, (err, results) => {
+      if (err) return reject(new AppError("Erreur DB", 500));
+      resolve(results);
+    });
+  });
+
+  if (!client) {
+    return next(new AppError("Aucun client trouvé.", 404));
+  } else {
+    res.status(200).json({
+      status: "success",
+      data: client,
+    });
+  }
+});
+
 exports.createClient = asyncHandler(async (req, res, next) => {
   console.log("req.body", req.body);
   const { nom, prenom, email, sexe, photo, age, objectif } = req.body;
