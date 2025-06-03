@@ -48,10 +48,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   const exp = Math.floor(expirationTime / 1000);
 
   // Sign the JWT token with the payload and secret
-  const token = jwt.sign(
-    { ...payload, exp }, // Ajoute le champ "exp" dans le payload
-    secretFromEnv
-  );
+  const token = jwt.sign({ ...payload, exp }, secretFromEnv);
   res.status(200).json({
     status: "success",
     message: "Utilisateur connecté avec succès.",

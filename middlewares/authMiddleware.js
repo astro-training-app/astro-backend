@@ -16,7 +16,7 @@ function authenticateToken(req, res, next) {
       return next(new AppError("Token invalide ou expiré", 403));
     }
 
-    req.user = decoded.user; // le payload contient "user": { id, email, ... }
+    req.user = decoded.user;
     next();
   });
 }

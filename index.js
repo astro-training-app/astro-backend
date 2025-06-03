@@ -13,7 +13,7 @@ app.use(CORS());
 
 app.use(express.json());
 
-//app.use("/api/coaches", coachRoutes);
+app.use("/api/coaches", coachRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/clients", clientRoutes);
 app.use("/api/mensurations", mensurationsRoutes);
