@@ -1,16 +1,106 @@
 const coachModel = require("../models/coachModel");
+const asyncHandler = require("express-async-handler");
+const AppError = require("../utils/AppError");
 
-exports.getAllCoaches = (req, res) => {
-  coachModel.getAll((err, coaches) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(coaches);
+exports.getAllCoaches = asyncHandler(async (req, res, next) => {
+  const coaches = await new Promise((resolve, reject) => {
+    coachModel.getAll((err, results) => {
+      if (err) return reject(new AppError("Error retrieving coaches.", 500));
+      resolve(results);
+    });
   });
-};
 
-exports.createCoach = (req, res) => {
+  res.status(200).json({
+    status: "success",
+    data: coaches,
+  });
+});
+
+exports.getCoachById = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  if (!id || isNaN(id) || parseInt(id) < 1) {
+    return next(new AppError("Invalid ID provided.", 400));
+  }
+
+  const coach = await new Promise((resolve, reject) => {
+    coachModel.findById(id, (err, result) => {
+      if (err) return reject(new AppError("Error retrieving the coach.", 500));
+      resolve(result);
+    });
+  });
+
+  if (!coach) {
+    return next(new AppError("No coach found with this ID.", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: coach,
+  });
+});
+
+exports.createCoach = asyncHandler(async (req, res, next) => {
   const { name, email } = req.body;
-  coachModel.create(name, email, (err) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.status(201).json({ message: "Coach created" });
+
+  if (!name || !email) {
+    return next(new AppError("Name and email are required.", 400));
+  }
+
+  await new Promise((resolve, reject) => {
+    coachModel.create(name, email, (err) => {
+      if (err) return reject(new AppError("Error creating coach.", 500));
+      resolve();
+    });
   });
-};
+
+  res.status(201).json({
+    status: "success",
+    message: "Coach successfully created.",
+  });
+});
+
+exports.updateCoach = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const { name, role } = req.body;
+
+  if (!id || isNaN(id) || parseInt(id) < 1) {
+    return next(new AppError("Invalid ID provided.", 400));
+  }
+
+  if (!name || !role) {
+    return next(new AppError("Name and email are required for update.", 400));
+  }
+
+  await new Promise((resolve, reject) => {
+    coachModel.update(id, name, role, (err) => {
+      if (err) return reject(new AppError("Error updating coach.", 500));
+      resolve();
+    });
+  });
+
+  res.status(200).json({
+    status: "success",
+    message: `Coach with ID ${id} updated successfully.`,
+  });
+});
+
+exports.deleteCoach = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  if (!id || isNaN(id) || parseInt(id) < 1) {
+    return next(new AppError("Invalid ID provided.", 400));
+  }
+
+  await new Promise((resolve, reject) => {
+    coachModel.delete(id, (err) => {
+      if (err) return reject(new AppError("Error deleting coach.", 500));
+      resolve();
+    });
+  });
+
+  res.status(200).json({
+    status: "success",
+    message: `Coach with ID ${id} deleted successfully.`,
+  });
+});
