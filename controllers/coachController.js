@@ -34,9 +34,12 @@ exports.getCoach = asyncHandler(async (req, res, next) => {
     return next(new AppError("No coach found with this ID.", 404));
   }
 
+  // S'assurer que 'coach' est un tableau, même si un seul coach est renvoyé
+  const coachArray = Array.isArray(coach) ? coach : [coach]; // Transformation en tableau si nécessaire
+
   res.status(200).json({
     status: "success",
-    data: coach,
+    data: coachArray, // Renvoi toujours un tableau, même si un seul coach est trouvé
   });
 });
 
