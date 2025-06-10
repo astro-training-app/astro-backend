@@ -16,15 +16,15 @@ exports.getAllCoaches = asyncHandler(async (req, res, next) => {
   });
 });
 
-exports.getCoachById = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
+exports.getCoach = asyncHandler(async (req, res, next) => {
+  const userId = req.user.id;
 
-  if (!id || isNaN(id) || parseInt(id) < 1) {
+  if (!userId || isNaN(userId) || parseInt(userId) < 1) {
     return next(new AppError("Invalid ID provided.", 400));
   }
 
   const coach = await new Promise((resolve, reject) => {
-    coachModel.findById(id, (err, result) => {
+    coachModel.findById(userId, (err, result) => {
       if (err) return reject(new AppError("Error retrieving the coach.", 500));
       resolve(result);
     });
@@ -61,10 +61,10 @@ exports.createCoach = asyncHandler(async (req, res, next) => {
 });
 
 exports.updateCoach = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
+  const userId = req.user.id;
   const { name, role } = req.body;
 
-  if (!id || isNaN(id) || parseInt(id) < 1) {
+  if (!userId || isNaN(userId) || parseInt(userId) < 1) {
     return next(new AppError("Invalid ID provided.", 400));
   }
 
@@ -73,7 +73,7 @@ exports.updateCoach = asyncHandler(async (req, res, next) => {
   }
 
   await new Promise((resolve, reject) => {
-    coachModel.update(id, name, role, (err) => {
+    coachModel.update(userId, name, role, (err) => {
       if (err) return reject(new AppError("Error updating coach.", 500));
       resolve();
     });
@@ -81,19 +81,19 @@ exports.updateCoach = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     status: "success",
-    message: `Coach with ID ${id} updated successfully.`,
+    message: `Coach with ID ${userId} updated successfully.`,
   });
 });
 
 exports.deleteCoach = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
+  const userId = req.user.id;
 
-  if (!id || isNaN(id) || parseInt(id) < 1) {
+  if (!userId || isNaN(userId) || parseInt(userId) < 1) {
     return next(new AppError("Invalid ID provided.", 400));
   }
 
   await new Promise((resolve, reject) => {
-    coachModel.delete(id, (err) => {
+    coachModel.delete(userId, (err) => {
       if (err) return reject(new AppError("Error deleting coach.", 500));
       resolve();
     });
@@ -101,6 +101,6 @@ exports.deleteCoach = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     status: "success",
-    message: `Coach with ID ${id} deleted successfully.`,
+    message: `Coach with ID ${userId} deleted successfully.`,
   });
 });

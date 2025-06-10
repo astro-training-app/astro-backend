@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const coachController = require("../controllers/coachController");
+const authenticateToken = require("../middlewares/authMiddleware");
 
-router.get("/", coachController.getAllCoaches);
-router.get("/:id", coachController.getCoachById);
+router.get("/", authenticateToken, coachController.getCoach);
 
-router.put("/:id", coachController.updateCoach);
+router.put("/", authenticateToken, coachController.updateCoach);
 
-router.delete("/:id", coachController.deleteCoach);
+router.delete("/", authenticateToken, coachController.deleteCoach);
 
 module.exports = router;
