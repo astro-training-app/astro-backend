@@ -8,12 +8,12 @@ function authenticateToken(req, res, next) {
   const token = authHeader && authHeader.split(" ")[1];
 
   if (!token) {
-    return next(new AppError("Accès refusé : token manquant", 401));
+    return next(new AppError("Access denied: missing token", 401));
   }
 
   jwt.verify(token, JWT_SECRET, (err, decoded) => {
     if (err) {
-      return next(new AppError("Token invalide ou expiré", 403));
+      return next(new AppError("Invalid or expired token", 403));
     }
 
     req.user = decoded.user;

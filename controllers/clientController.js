@@ -7,7 +7,7 @@ exports.getClientsForUser = asyncHandler(async (req, res, next) => {
 
   const clients = await new Promise((resolve, reject) => {
     clientModel.findByCoachId(userId, (err, results) => {
-      if (err) return reject(new AppError("Erreur DB", 500));
+      if (err) return reject(new AppError("Database error", 500));
       resolve(results);
     });
   });
@@ -24,96 +24,96 @@ exports.getClientById = asyncHandler(async (req, res, next) => {
 
   const client = await new Promise((resolve, reject) => {
     clientModel.findByIdAndCoachId(id, coachId, (err, results) => {
-      if (err) return reject(new AppError("Erreur DB", 500));
+      if (err) return reject(new AppError("Database error", 500));
       resolve(results);
     });
   });
 
   if (!client) {
-    return next(new AppError("Aucun client trouvé.", 404));
-  } else {
-    res.status(200).json({
-      status: "success",
-      data: client,
-    });
+    return next(new AppError("Client not found.", 404));
   }
+
+  res.status(200).json({
+    status: "success",
+    data: client,
+  });
 });
 
 exports.createClient = asyncHandler(async (req, res, next) => {
-  console.log("req.body", req.body);
-  const { nom, prenom, email, sexe, photo, age, objectif } = req.body;
+  const { lastName, firstName, email, gender, photo, age, goal } = req.body;
   const userId = req.user.id;
 
-  if (!nom || !prenom || !email) {
-    return next(new AppError("Nom, prénom et email sont requis.", 400));
+  if (!lastName || !firstName || !email) {
+    return next(
+      new AppError("Last name, first name and email are required.", 400)
+    );
   }
 
   if (typeof age !== "number" || age < 0 || age > 120) {
-    return next(new AppError("Âge invalide.", 400));
+    return next(new AppError("Invalid age.", 400));
   }
 
-  if (sexe && !["H", "F", "Autre"].includes(sexe)) {
+  if (gender && !["M", "W", "Other"].includes(gender)) {
     return next(
-      new AppError("Sexe invalide. Valeurs autorisées : H, F, Autre.", 400)
+      new AppError("Invalid gender. Allowed values: M, W, Other.", 400)
     );
   }
 
   clientModel.create(
-    nom,
-    prenom,
+    lastName,
+    firstName,
     email,
-    sexe,
+    gender,
     photo,
     age,
-    objectif,
+    goal,
     userId,
     (err) => {
-      if (err)
-        return next(new AppError("Erreur lors de la création du client", 500));
+      if (err) return next(new AppError("Error while creating client", 500));
       res
         .status(201)
-        .json({ status: "success", message: "Client créé avec succès." });
+        .json({ status: "success", message: "Client successfully created." });
     }
   );
 });
 
 exports.updateClient = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const { nom, prenom, email, sexe, photo, age, objectif } = req.body;
+  const { lastName, firstName, email, gender, photo, age, goal } = req.body;
 
   if (!id || isNaN(id) || parseInt(id) < 1) {
-    return next(new AppError("ID invalide fourni.", 400));
+    return next(new AppError("Invalid ID provided.", 400));
   }
 
   clientModel.findById(id, (err, client) => {
     if (err) {
-      return next(new AppError("Erreur lors de la recherche du client.", 500));
+      return next(new AppError("Error while fetching client.", 500));
     }
     if (!client) {
-      return next(new AppError("Aucun client trouvé avec cet ID.", 404));
+      return next(new AppError("Client not found with this ID.", 404));
     }
 
-    if (!nom || !prenom || !email) {
-      return next(new AppError("Champs obligatoires manquants.", 400));
+    if (!lastName || !firstName || !email) {
+      return next(new AppError("Missing required fields.", 400));
     }
 
     clientModel.update(
       id,
-      nom,
-      prenom,
+      lastName,
+      firstName,
       email,
-      sexe,
+      gender,
       photo,
       age,
-      objectif,
+      goal,
       (err) => {
         if (err) {
-          return next(new AppError("Erreur lors de la mise à jour.", 500));
+          return next(new AppError("Error while updating client.", 500));
         }
 
         res.status(200).json({
           status: "success",
-          message: `Client avec l'ID ${id} mis à jour.`,
+          message: `Client with ID ${id} updated.`,
         });
       }
     );
@@ -124,27 +124,25 @@ exports.deleteClient = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
   if (!id || isNaN(id) || parseInt(id) < 1) {
-    return next(new AppError("ID invalide fourni.", 400));
+    return next(new AppError("Invalid ID provided.", 400));
   }
 
   clientModel.findById(id, (err, client) => {
     if (err) {
-      return next(new AppError("Erreur lors de la recherche du client.", 500));
+      return next(new AppError("Error while fetching client.", 500));
     }
     if (!client) {
-      return next(new AppError("Aucun client trouvé avec cet ID.", 404));
+      return next(new AppError("Client not found with this ID.", 404));
     }
 
     clientModel.delete(id, (err) => {
       if (err) {
-        return next(
-          new AppError("Erreur lors de la suppression du client.", 500)
-        );
+        return next(new AppError("Error while deleting client.", 500));
       }
 
       res.status(200).json({
         status: "success",
-        message: `Client avec l'ID ${id} supprimé.`,
+        message: `Client with ID ${id} deleted.`,
       });
     });
   });

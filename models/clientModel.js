@@ -14,7 +14,6 @@ exports.findById = (id, callback) => {
   });
 };
 
-// returns client by id if coachId matches
 exports.findByIdAndCoachId = (id, coachId, callback) => {
   const sql = "SELECT * FROM clients WHERE id = ? AND user_id = ?";
   db.get(sql, [id, coachId], (err, row) => {
@@ -23,42 +22,41 @@ exports.findByIdAndCoachId = (id, coachId, callback) => {
 };
 
 exports.create = (
-  nom,
-  prenom,
+  lastName,
+  firstName,
   email,
-  sexe,
+  gender,
   photo,
   age,
-  objectif,
+  goal,
   userId,
   callback
 ) => {
-  console.log("userId", userId);
   const sql = `
-    INSERT INTO clients (nom, prenom, email, sexe, photo, age, objectif, user_id)
+    INSERT INTO clients (last_name, first_name, email, gender, photo, age, goal, user_id)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `;
-  const params = [nom, prenom, email, sexe, photo, age, objectif, userId];
+  const params = [lastName, firstName, email, gender, photo, age, goal, userId];
   db.run(sql, params, callback);
 };
 
 exports.update = (
   id,
-  nom,
-  prenom,
+  lastName,
+  firstName,
   email,
-  sexe,
+  gender,
   photo,
   age,
-  objectif,
+  goal,
   callback
 ) => {
   const sql = `
     UPDATE clients
-    SET nom = ?, prenom = ?, email = ?, sexe = ?, photo = ?, age = ?, objectif = ?
+    SET last_name = ?, first_name = ?, email = ?, gender = ?, photo = ?, age = ?, goal = ?
     WHERE id = ?
   `;
-  const params = [nom, prenom, email, sexe, photo, age, objectif, id];
+  const params = [lastName, firstName, email, gender, photo, age, goal, id];
   db.run(sql, params, callback);
 };
 
