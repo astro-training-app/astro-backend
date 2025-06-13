@@ -26,7 +26,7 @@ describe("Auth API", () => {
       password: "password456",
     });
 
-    expect(res.statusCode).toBe(400);
+    expect(res.statusCode).toBe(409);
   });
 
   it("should login user", async () => {
