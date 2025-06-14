@@ -38,7 +38,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "lax",
     maxAge: 60 * 60 * 1000,
   });
 
@@ -96,6 +96,34 @@ exports.register = asyncHandler(async (req, res, next) => {
     message: "User successfully created.",
     data: {
       userId: newUser.id,
+    },
+  });
+});
+
+exports.getMe = asyncHandler(async (req, res, next) => {
+  const userId = req.user.id;
+
+  const user = await new Promise((resolve, reject) => {
+    userModel.findById(userId, (err, user) => {
+      if (err) return reject(new AppError("Error while fetching user.", 500));
+      resolve(user);
+    });
+  });
+
+  if (!user) {
+    return next(new AppError("User not found.", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        account_type: user.account_type,
+      },
     },
   });
 });

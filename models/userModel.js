@@ -8,6 +8,13 @@ exports.findByEmail = (email, callback) => {
   });
 };
 
+exports.findById = (id, callback) => {
+  const sql = "SELECT * FROM users WHERE id = ?";
+  db.get(sql, [id], (err, user) => {
+    callback(err, user);
+  });
+};
+
 exports.createUser = (userData, callback) => {
   const saltRounds = 10;
 
