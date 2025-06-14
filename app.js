@@ -11,8 +11,15 @@ const AppError = require("./utils/AppError");
 const globalErrorHandler = require("./controllers/errorController");
 
 const app = express();
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 
-app.use(CORS());
+app.use(
+  CORS({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.use("/api/coaches", coachRoutes);

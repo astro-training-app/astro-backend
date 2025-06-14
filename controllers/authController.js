@@ -35,11 +35,16 @@ exports.login = asyncHandler(async (req, res, next) => {
 
   const token = jwt.sign({ ...payload, exp }, JWT_SECRET);
 
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 60 * 60 * 1000,
+  });
+
   res.status(200).json({
     status: "success",
     message: "User logged in successfully.",
-    token: token,
-    expireAt: expirationTime,
     data: {
       user: {
         id: user.id,
@@ -92,5 +97,13 @@ exports.register = asyncHandler(async (req, res, next) => {
     data: {
       userId: newUser.id,
     },
+  });
+});
+
+exports.logout = asyncHandler(async (req, res, next) => {
+  res.clearCookie("token");
+  res.status(200).json({
+    status: "success",
+    message: "User logged out successfully.",
   });
 });
